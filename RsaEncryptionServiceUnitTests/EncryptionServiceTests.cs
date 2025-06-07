@@ -30,8 +30,10 @@ public class EncryptionServiceTests
         Assert.False(string.IsNullOrWhiteSpace(publicKey));
         Assert.False(string.IsNullOrWhiteSpace(privateKey));
         Assert.NotEqual(publicKey, privateKey);
-        Assert.Contains("<RSAKeyValue>", publicKey);
-        Assert.Contains("<RSAKeyValue>", privateKey);
+        Assert.StartsWith("<RSAKeyValue>", publicKey);
+        Assert.StartsWith("<RSAKeyValue>", privateKey);
+        Assert.EndsWith("</RSAKeyValue>", publicKey);
+        Assert.EndsWith("</RSAKeyValue>", privateKey);
     }
 
     /// <summary>
