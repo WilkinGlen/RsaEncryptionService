@@ -4,15 +4,24 @@ using FluentAssertions;
 using RsaEncryptionService;
 using System.Security.Cryptography;
 
+/// <summary>
+/// Contains unit tests for the RSA encryption and decryption functionality.
+/// </summary>
 public class EncryptionServiceTests
 {
     private readonly RSA rsa;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EncryptionServiceTests"/> class.
+    /// </summary>
     public EncryptionServiceTests()
     {
         this.rsa = RSA.Create(2048);
     }
 
+    /// <summary>
+    /// Verifies that CreateRsaKeys generates non-empty public and private keys in valid XML format.
+    /// </summary>
     [Fact]
     public void CreateRsaKeys_ReturnsNonEmptyKeys()
     {
@@ -25,6 +34,9 @@ public class EncryptionServiceTests
         Assert.Contains("<RSAKeyValue>", privateKey);
     }
 
+    /// <summary>
+    /// Verifies that generated RSA keys are in valid XML format with correct start and end tags.
+    /// </summary>
     [Fact]
     public void CreateRsaKeys_KeysAreValidXml()
     {
@@ -36,6 +48,9 @@ public class EncryptionServiceTests
         Assert.EndsWith("</RSAKeyValue>", privateKey);
     }
 
+    /// <summary>
+    /// Verifies that the Encrypt method returns a non-empty string when given valid input.
+    /// </summary>
     [Fact]
     public void Encrypt_ReturnsString()
     {
@@ -44,6 +59,9 @@ public class EncryptionServiceTests
         _ = actual.Should().NotBeNullOrEmpty();
     }
 
+    /// <summary>
+    /// Verifies that the Decrypt method correctly decrypts previously encrypted text.
+    /// </summary>
     [Fact]
     public void Decrypt_ReturnsCorrectString()
     {
@@ -57,6 +75,10 @@ public class EncryptionServiceTests
         _ = actual.Should().Be("Hello, World!");
     }
 
+    /// <summary>
+    /// Verifies that Encrypt throws ArgumentNullException when plainText is null or empty.
+    /// </summary>
+    /// <param name="plainText">The plain text input to test.</param>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -69,6 +91,10 @@ public class EncryptionServiceTests
         Assert.Equal($"{nameof(plainText)} cannot be null (Parameter '{nameof(plainText)}')", ex.Message);
     }
 
+    /// <summary>
+    /// Verifies that Encrypt throws ArgumentNullException when publicKeyXml is null or empty.
+    /// </summary>
+    /// <param name="publicKeyXml">The public key XML string to test.</param>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -81,6 +107,10 @@ public class EncryptionServiceTests
         Assert.Equal($"{nameof(publicKeyXml)} cannot be null (Parameter '{nameof(publicKeyXml)}')", ex.Message);
     }
 
+    /// <summary>
+    /// Verifies that Decrypt throws ArgumentNullException when encryptedText is null or empty.
+    /// </summary>
+    /// <param name="encryptedText">The encrypted text to test.</param>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -93,6 +123,10 @@ public class EncryptionServiceTests
         Assert.Equal($"{nameof(encryptedText)} cannot be null (Parameter '{nameof(encryptedText)}')", ex.Message);
     }
 
+    /// <summary>
+    /// Verifies that Decrypt throws ArgumentNullException when privateKeyXml is null or empty.
+    /// </summary>
+    /// <param name="privateKeyXml">The private key XML string to test.</param>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -105,6 +139,9 @@ public class EncryptionServiceTests
         Assert.Equal($"{nameof(privateKeyXml)} cannot be null (Parameter '{nameof(privateKeyXml)}')", ex.Message);
     }
 
+    /// <summary>
+    /// Verifies that a complete encryption and decryption round-trip succeeds using generated keys.
+    /// </summary>
     [Fact]
     public void CreateRsaKeys_EncryptDecrypt_RoundTrip_Succeeds()
     {
@@ -120,6 +157,9 @@ public class EncryptionServiceTests
         Assert.Equal(originalText, decrypted);
     }
 
+    /// <summary>
+    /// Verifies that Encrypt throws CryptographicException when provided with an invalid public key.
+    /// </summary>
     [Fact]
     public void Encrypt_WithInvalidPublicKey_ThrowsException()
     {
@@ -130,6 +170,9 @@ public class EncryptionServiceTests
         Assert.Equal("Input string does not contain a valid encoding of the 'RSA' 'Modulus' parameter.", ex.Message);
     }
 
+    /// <summary>
+    /// Verifies that Decrypt throws CryptographicException when provided with an invalid private key.
+    /// </summary>
     [Fact]
     public void Decrypt_WithInvalidPrivateKey_ThrowsException()
     {
