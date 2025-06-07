@@ -20,30 +20,14 @@ public class EncryptionServiceTests
     }
 
     /// <summary>
-    /// Verifies that CreateRsaKeys generates non-empty public and private keys in valid XML format.
-    /// </summary>
-    [Fact]
-    public void CreateRsaKeys_ReturnsNonEmptyKeys()
-    {
-        var (publicKey, privateKey) = EncryptionService.CreateRsaKeys();
-
-        Assert.False(string.IsNullOrWhiteSpace(publicKey));
-        Assert.False(string.IsNullOrWhiteSpace(privateKey));
-        Assert.NotEqual(publicKey, privateKey);
-        Assert.StartsWith("<RSAKeyValue>", publicKey);
-        Assert.StartsWith("<RSAKeyValue>", privateKey);
-        Assert.EndsWith("</RSAKeyValue>", publicKey);
-        Assert.EndsWith("</RSAKeyValue>", privateKey);
-    }
-
-    /// <summary>
     /// Verifies that generated RSA keys are in valid XML format with correct start and end tags.
     /// </summary>
     [Fact]
-    public void CreateRsaKeys_KeysAreValidXml()
+    public void CreateRsaKeys_KeysAreValidXmlAndDifferent()
     {
         var (publicKey, privateKey) = EncryptionService.CreateRsaKeys();
 
+        Assert.NotEqual(publicKey, privateKey);
         Assert.StartsWith("<RSAKeyValue>", publicKey);
         Assert.StartsWith("<RSAKeyValue>", privateKey);
         Assert.EndsWith("</RSAKeyValue>", publicKey);
