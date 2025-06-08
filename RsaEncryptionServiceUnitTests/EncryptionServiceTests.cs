@@ -27,11 +27,11 @@ public class EncryptionServiceTests
     {
         var (publicKey, privateKey) = EncryptionService.CreateRsaKeys();
 
-        Assert.NotEqual(publicKey, privateKey);
-        Assert.StartsWith("<RSAKeyValue>", publicKey);
-        Assert.StartsWith("<RSAKeyValue>", privateKey);
-        Assert.EndsWith("</RSAKeyValue>", publicKey);
-        Assert.EndsWith("</RSAKeyValue>", privateKey);
+        _ = publicKey.Should().NotBe(privateKey);
+        _ = publicKey.Should().StartWith("<RSAKeyValue>");
+        _ = privateKey.Should().StartWith("<RSAKeyValue>");
+        _ = publicKey.Should().EndWith("</RSAKeyValue>");
+        _ = privateKey.Should().EndWith("</RSAKeyValue>");
     }
 
     /// <summary>
@@ -73,8 +73,8 @@ public class EncryptionServiceTests
         var publicKeyXml = this.rsa.ToXmlString(false);
 
         var ex = Assert.Throws<ArgumentNullException>(() => EncryptionService.Encrypt(plainText!, publicKeyXml));
-        Assert.Equal("plainText", ex.ParamName);
-        Assert.Equal($"{nameof(plainText)} cannot be null (Parameter '{nameof(plainText)}')", ex.Message);
+        _ = ex.ParamName.Should().Be("plainText");
+        _ = ex.Message.Should().Be($"{nameof(plainText)} cannot be null (Parameter '{nameof(plainText)}')");
     }
 
     /// <summary>
@@ -89,8 +89,9 @@ public class EncryptionServiceTests
         var plainText = "test";
 
         var ex = Assert.Throws<ArgumentNullException>(() => EncryptionService.Encrypt(plainText, publicKeyXml!));
-        Assert.Equal("publicKeyXml", ex.ParamName);
-        Assert.Equal($"{nameof(publicKeyXml)} cannot be null (Parameter '{nameof(publicKeyXml)}')", ex.Message);
+        _ = ex.ParamName.Should().Be("publicKeyXml");
+        _ = ex.ParamName.Should().Be("publicKeyXml");
+        _ = ex.Message.Should().Be($"{nameof(publicKeyXml)} cannot be null (Parameter '{nameof(publicKeyXml)}')");
     }
 
     /// <summary>
@@ -105,8 +106,8 @@ public class EncryptionServiceTests
         var privateKeyXml = this.rsa.ToXmlString(true);
 
         var ex = Assert.Throws<ArgumentNullException>(() => EncryptionService.Decrypt(encryptedText!, privateKeyXml));
-        Assert.Equal("encryptedText", ex.ParamName);
-        Assert.Equal($"{nameof(encryptedText)} cannot be null (Parameter '{nameof(encryptedText)}')", ex.Message);
+        _ = ex.ParamName.Should().Be("encryptedText");
+        _ = ex.Message.Should().Be($"{nameof(encryptedText)} cannot be null (Parameter '{nameof(encryptedText)}')");
     }
 
     /// <summary>
@@ -121,8 +122,8 @@ public class EncryptionServiceTests
         var encryptedText = "someBase64String";
 
         var ex = Assert.Throws<ArgumentNullException>(() => EncryptionService.Decrypt(encryptedText, privateKeyXml!));
-        Assert.Equal("privateKeyXml", ex.ParamName);
-        Assert.Equal($"{nameof(privateKeyXml)} cannot be null (Parameter '{nameof(privateKeyXml)}')", ex.Message);
+        _ = ex.ParamName.Should().Be("privateKeyXml");
+        _ = ex.Message.Should().Be($"{nameof(privateKeyXml)} cannot be null (Parameter '{nameof(privateKeyXml)}')");
     }
 
     /// <summary>
@@ -137,10 +138,11 @@ public class EncryptionServiceTests
         var encrypted = EncryptionService.Encrypt(originalText, publicKey);
         var decrypted = EncryptionService.Decrypt(encrypted, privateKey);
 
-        Assert.NotNull(publicKey);
-        Assert.NotNull(privateKey);
-        Assert.NotNull(encrypted);
-        Assert.Equal(originalText, decrypted);
+        _ = publicKey.Should().NotBeNullOrEmpty();
+        _ = privateKey.Should().NotBeNullOrEmpty();
+        _ = encrypted.Should().NotBeNullOrEmpty();
+        _ = decrypted.Should().NotBeNullOrEmpty();
+        _ = decrypted.Should().Be(originalText);
     }
 
     /// <summary>
@@ -153,7 +155,7 @@ public class EncryptionServiceTests
         var plainText = "Test";
 
         var ex = Assert.ThrowsAny<CryptographicException>(() => EncryptionService.Encrypt(plainText, invalidPublicKey));
-        Assert.Equal("Input string does not contain a valid encoding of the 'RSA' 'Modulus' parameter.", ex.Message);
+        _ = ex.Message.Should().Be("Input string does not contain a valid encoding of the 'RSA' 'Modulus' parameter.");
     }
 
     /// <summary>
@@ -168,6 +170,6 @@ public class EncryptionServiceTests
         var invalidPrivateKey = "<RSAKeyValue></RSAKeyValue>";
 
         var ex = Assert.ThrowsAny<CryptographicException>(() => EncryptionService.Decrypt(encrypted, invalidPrivateKey));
-        Assert.Equal("Input string does not contain a valid encoding of the 'RSA' 'Modulus' parameter.", ex.Message);
+        _ = ex.Message.Should().Be("Input string does not contain a valid encoding of the 'RSA' 'Modulus' parameter.");
     }
 }
