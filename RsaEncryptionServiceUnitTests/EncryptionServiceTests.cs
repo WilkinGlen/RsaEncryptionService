@@ -51,14 +51,15 @@ public class EncryptionServiceTests
     [Fact]
     public void Decrypt_ReturnsCorrectString()
     {
+        const string expectedString = "Hello, World!";
         var publicKeyXml = this.rsa.ToXmlString(false);
         var privateKeyXml = this.rsa.ToXmlString(true);
-        var encryptedText = EncryptionService.Encrypt("Hello, World!", publicKeyXml);
+        var encryptedText = EncryptionService.Encrypt(expectedString, publicKeyXml);
 
         var actual = EncryptionService.Decrypt(encryptedText, privateKeyXml);
 
         _ = actual.Should().NotBeNullOrEmpty();
-        _ = actual.Should().Be("Hello, World!");
+        _ = actual.Should().Be(expectedString);
     }
 
     /// <summary>
@@ -73,7 +74,7 @@ public class EncryptionServiceTests
         var publicKeyXml = this.rsa.ToXmlString(false);
 
         var ex = Assert.Throws<ArgumentNullException>(() => EncryptionService.Encrypt(plainText!, publicKeyXml));
-        _ = ex.ParamName.Should().Be("plainText");
+        _ = ex.ParamName.Should().Be($"{nameof(plainText)}");
         _ = ex.Message.Should().Be($"{nameof(plainText)} cannot be null (Parameter '{nameof(plainText)}')");
     }
 
@@ -89,8 +90,8 @@ public class EncryptionServiceTests
         var plainText = "test";
 
         var ex = Assert.Throws<ArgumentNullException>(() => EncryptionService.Encrypt(plainText, publicKeyXml!));
-        _ = ex.ParamName.Should().Be("publicKeyXml");
-        _ = ex.ParamName.Should().Be("publicKeyXml");
+
+        _ = ex.ParamName.Should().Be($"{nameof(publicKeyXml)}");
         _ = ex.Message.Should().Be($"{nameof(publicKeyXml)} cannot be null (Parameter '{nameof(publicKeyXml)}')");
     }
 
@@ -106,7 +107,8 @@ public class EncryptionServiceTests
         var privateKeyXml = this.rsa.ToXmlString(true);
 
         var ex = Assert.Throws<ArgumentNullException>(() => EncryptionService.Decrypt(encryptedText!, privateKeyXml));
-        _ = ex.ParamName.Should().Be("encryptedText");
+
+        _ = ex.ParamName.Should().Be($"{nameof(encryptedText)}");
         _ = ex.Message.Should().Be($"{nameof(encryptedText)} cannot be null (Parameter '{nameof(encryptedText)}')");
     }
 
@@ -122,7 +124,8 @@ public class EncryptionServiceTests
         var encryptedText = "someBase64String";
 
         var ex = Assert.Throws<ArgumentNullException>(() => EncryptionService.Decrypt(encryptedText, privateKeyXml!));
-        _ = ex.ParamName.Should().Be("privateKeyXml");
+
+        _ = ex.ParamName.Should().Be($"{nameof(privateKeyXml)}");
         _ = ex.Message.Should().Be($"{nameof(privateKeyXml)} cannot be null (Parameter '{nameof(privateKeyXml)}')");
     }
 
@@ -155,6 +158,7 @@ public class EncryptionServiceTests
         var plainText = "Test";
 
         var ex = Assert.ThrowsAny<CryptographicException>(() => EncryptionService.Encrypt(plainText, invalidPublicKey));
+
         _ = ex.Message.Should().Be("Input string does not contain a valid encoding of the 'RSA' 'Modulus' parameter.");
     }
 
@@ -170,6 +174,7 @@ public class EncryptionServiceTests
         var invalidPrivateKey = "<RSAKeyValue></RSAKeyValue>";
 
         var ex = Assert.ThrowsAny<CryptographicException>(() => EncryptionService.Decrypt(encrypted, invalidPrivateKey));
+
         _ = ex.Message.Should().Be("Input string does not contain a valid encoding of the 'RSA' 'Modulus' parameter.");
     }
 }
